@@ -1,4 +1,5 @@
 import Task from '../task/task';
+import './task-list.css';
 
 function TaskList({ todos, onDeleted, onToggleDone }) {
   const elements = todos.map((item) => {

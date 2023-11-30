@@ -1,4 +1,5 @@
 import { PureComponent } from 'react';
+import './footer.css';
 
 import TasksFilter from '../tasks-filter/tasks-filter';
 

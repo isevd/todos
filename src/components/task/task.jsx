@@ -1,6 +1,7 @@
 import { Component } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import PropTypes from 'prop-types';
+import './task.css';
 
 export default class Task extends Component {
   static defaultProps = {
@@ -12,28 +13,35 @@ export default class Task extends Component {
   };
 
   state = {
-    time: new Date(),
+    formattedDistance: '',
     editing: false,
     label: this.props.label,
   };
 
-  intervalId = null;
-
   updateFormattedDistance = () => {
-    const formattedDistance = formatDistanceToNow(new Date(), {
+    const { createdDate } = this.props;
+    const formattedDistance = formatDistanceToNow(createdDate, {
       includeSeconds: true,
+      addSuffix: true,
     });
     this.setState({ formattedDistance });
   };
 
+  intervalId = null;
+
   componentDidMount() {
     const { updateInterval } = this.props;
+    this.updateFormattedDistance();
     this.intervalId = setInterval(this.updateFormattedDistance, updateInterval);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.intervalId);
   }
 
   render() {
     const { label, onDeleted, onToggleDone, done } = this.props;
-
+    const { formattedDistance } = this.state;
     let status = 'status';
     if (done) status = 'completed';
 
@@ -43,18 +51,12 @@ export default class Task extends Component {
           <input className="toggle" type="checkbox" onChange={onToggleDone} checked={done} />
           <label>
             <span className="description">{label}</span>
-            <span className="created">
-              {' '}
-              Created{' '}
-              {formatDistanceToNow(this.state.time, {
-                includeSeconds: true,
-                addSuffix: true,
-              })}
-            </span>
+            <span className="created">{formattedDistance}</span>
           </label>
           <button className="icon icon-edit" />
           <button className="icon icon-destroy" onClick={onDeleted} />
         </div>
+        <input type="text" className="edit" value="Editing task"></input>
       </li>
     );
   }

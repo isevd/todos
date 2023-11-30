@@ -1,4 +1,5 @@
 import { PureComponent } from 'react';
+import './tasks-filter.css';
 
 export default class TaskFilter extends PureComponent {
   render() {
