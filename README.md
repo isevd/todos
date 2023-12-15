@@ -1,3 +1,3 @@
-#TODOS
+#TODOS with timer
 
-https://todos-git-timer-isevds-projects.vercel.app/
+https://todos-isevds-projects.vercel.app/
