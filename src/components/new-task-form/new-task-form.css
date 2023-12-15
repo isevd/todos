@@ -1,17 +1,5 @@
-.todoapp h1 {
-  position: absolute;
-  top: -140px;
-  width: 100%;
-  font-size: 80px;
-  font-weight: 200;
-  text-align: center;
-  color: rgba(175, 47, 47, 0.15);
-  -webkit-text-rendering: optimizeLegibility;
-  -moz-text-rendering: optimizeLegibility;
-  text-rendering: optimizeLegibility;
-}
-
 .new-todo,
+.new-todo-form .new-todo-form__timer,
 .edit {
   position: relative;
   margin: 0;
@@ -29,11 +17,26 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-.new-todo {
-  padding: 16px 16px 16px 60px;
+.new-todo,
+.new-todo-form .new-todo-form__timer {
+  padding: 16px 16px 16px 30px;
   border: none;
   background: rgba(0, 0, 0, 0.003);
   box-shadow: inset 0 -2px 1px rgba(0, 0, 0, 0.03);
+}
+
+.new-todo {
+  width: 70%;
+}
+
+.new-todo-form .new-todo-form__timer {
+  width: 20%;
+  padding-left: 16px;
+}
+
+.new-todo-form {
+  display: flex;
+  margin-bottom: 0;
 }
 
 .todoapp input::-webkit-input-placeholder {
@@ -52,4 +55,8 @@
   font-style: italic;
   font-weight: 300;
   color: rgba(0, 0, 0, 0.4);
+}
+
+.todoapp {
+  width: 650px;
 }

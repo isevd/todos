@@ -1,7 +1,7 @@
-import { PureComponent } from 'react';
+import { Component } from 'react';
 import './tasks-filter.css';
 
-export default class TaskFilter extends PureComponent {
+export default class TaskFilter extends Component {
   render() {
     const { filter, setFilter } = this.props;
     return (

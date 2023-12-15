@@ -1,7 +1,8 @@
 import { Component } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import PropTypes from 'prop-types';
-import './task.css';
+
+import Timer from '../timer/timer';
 
 export default class Task extends Component {
   static defaultProps = {
@@ -14,7 +15,6 @@ export default class Task extends Component {
 
   state = {
     formattedDistance: '',
-    editing: false,
     label: this.props.label,
   };
 
@@ -40,23 +40,32 @@ export default class Task extends Component {
   }
 
   render() {
-    const { label, onDeleted, onToggleDone, done } = this.props;
+    const { label, onDeleted, onToggleDone, done, id, startTimer, stopTimer, todoList, timerValue } = this.props;
     const { formattedDistance } = this.state;
+
     let status = 'status';
     if (done) status = 'completed';
 
     return (
       <li className={status}>
         <div className="view">
-          <input className="toggle" type="checkbox" onChange={onToggleDone} checked={done} />
+          <input className="toggle" type="checkbox" onChange={onToggleDone} checked={done} id={id} />
           <label>
-            <span className="description">{label}</span>
-            <span className="created">{formattedDistance}</span>
+            <span className="title">{label}</span>
+            <div className="description">
+              <Timer
+                id={id}
+                taskList={todoList}
+                startTimer={startTimer}
+                stopTimer={stopTimer}
+                timerValue={timerValue}
+              />
+            </div>
+            <span className="description">created {formattedDistance}</span>
           </label>
           <button className="icon icon-edit" />
           <button className="icon icon-destroy" onClick={onDeleted} />
         </div>
-        <input type="text" className="edit" value="Editing task"></input>
       </li>
     );
   }
