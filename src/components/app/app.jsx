@@ -75,7 +75,6 @@ export default class App extends Component {
 
   addItem = (text, min, sec) => {
     const newItem = this.createTodoItem(text, min, sec);
-
     this.setState(({ todoData }) => {
       const newArr = [newItem, ...todoData];
       return {
@@ -123,51 +122,63 @@ export default class App extends Component {
 
   startTimer = (id) => {
     this.setState(({ todoData }) => {
-      const newArr = [...todoData];
-      const idx = newArr.findIndex((el) => el.id === id);
-      if (newArr[idx].timerId !== null || newArr[idx].status === 'completed') {
+      const taskIndex = todoData.findIndex((item) => item.id === id);
+      const task = todoData[taskIndex];
+
+      if (task.timerId === null && !task.done) {
+        const newArr = [...todoData];
+        newArr[taskIndex].timerId = this.createTimerInterval(id);
+
         return {
           todoData: newArr,
         };
       }
+      return null;
+    });
+  };
 
-      newArr[idx].timerId = setInterval(() => {
-        const time = newArr[idx].timerValue.split(':');
-        let minutes = parseInt(time[0], 10);
-        let seconds = parseInt(time[1], 10);
-        if (minutes > 0 || seconds > 0) {
-          if (seconds === 0) {
-            minutes--;
-            seconds = 59;
-          } else {
-            seconds--;
-          }
-        } else {
-          clearInterval(newArr[idx].timerId);
-          newArr[idx].timerId = null;
-        }
-
-        const newTime = this.setTimer(minutes, seconds);
-        newArr[idx].timerValue = newTime;
-        this.setState({ todoData: newArr });
-      }, 1000);
-
+  stopTimer = (id) => {
+    this.setState(({ todoData }) => {
+      const newArr = todoData.map((item) =>
+        item.id === id ? { ...item, timerId: this.clearTimerInterval(item.timerId) } : item
+      );
       return {
         todoData: newArr,
       };
     });
   };
 
-  stopTimer = (id) => {
-    this.setState(({ todoData }) => {
-      const newArr = [...todoData];
-      const idx = newArr.findIndex((el) => el.id === id);
-      clearInterval(newArr[idx].timerId);
-      newArr[idx].timerId = null;
-      return {
-        todoData: newArr,
-      };
-    });
+  createTimerInterval = (id) => {
+    return setInterval(() => {
+      this.setState(({ todoData }) => {
+        const newArr = todoData.map((item) =>
+          item.id === id ? { ...item, timerValue: this.updateTimerValue(item.timerValue) } : item
+        );
+        return {
+          todoData: newArr,
+        };
+      });
+    }, 1000);
+  };
+
+  clearTimerInterval = (timerId) => {
+    clearInterval(timerId);
+    return null;
+  };
+
+  updateTimerValue = (timerValue) => {
+    const time = timerValue.split(':');
+    let minutes = parseInt(time[0], 10);
+    let seconds = parseInt(time[1], 10);
+    if (minutes > 0 || seconds > 0) {
+      if (seconds === 0) {
+        minutes--;
+        seconds = 59;
+      } else {
+        seconds--;
+      }
+    }
+    return this.setTimer(minutes, seconds);
   };
 
   setTimer = (min = '00', sec = '00') => {
