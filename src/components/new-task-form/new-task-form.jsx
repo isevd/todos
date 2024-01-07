@@ -1,87 +1,70 @@
-import { Component } from 'react';
-
+import { useState } from 'react';
 import './new-task-form.css';
 
-export default class NewTaskForm extends Component {
-  constructor() {
-    super();
-    this.state = {
-      label: '',
-      minutes: '',
-      seconds: '',
-    };
+const NewTaskForm = ({ onItemAdded }) => {
+  const [label, setLabel] = useState('');
+  const [minutes, setMinutes] = useState('');
+  const [seconds, setSeconds] = useState('');
 
-    this.onLabelChange = (e) => {
-      this.setState({
-        label: e.target.value,
-      });
-    };
+  const onLabelChange = (e) => {
+    setLabel(e.target.value);
+  };
 
-    this.onMinChange = (e) => {
-      if (/^\d{0,2}$/.test(e.target.value)) {
-        this.setState({
-          minutes: e.target.value,
-        });
-      }
-    };
+  const onMinChange = (e) => {
+    if (/^\d{0,2}$/.test(e.target.value)) {
+      setMinutes(e.target.value);
+    }
+  };
 
-    this.onSecChange = (e) => {
-      if (/^\d{0,2}$/.test(e.target.value)) {
-        this.setState({
-          seconds: e.target.value,
-        });
-      }
-    };
+  const onSecChange = (e) => {
+    if (/^\d{0,2}$/.test(e.target.value)) {
+      setSeconds(e.target.value);
+    }
+  };
 
-    this.onSubmit = (e) => {
-      e.preventDefault();
-      const { onItemAdded } = this.props;
-      const { label, minutes, seconds } = this.state;
+  const onSubmit = (e) => {
+    e.preventDefault();
 
-      if (!minutes && !seconds) {
-        return;
-      }
-      if (label.length === 0 || label.trim().length === 0) {
-        return;
-      }
+    if (!minutes && !seconds) {
+      return;
+    }
+    if (label.length === 0 || label.trim().length === 0) {
+      return;
+    }
 
-      onItemAdded(label, minutes, seconds);
-      this.setState({
-        label: '',
-        minutes: '',
-        seconds: '',
-      });
-    };
-  }
+    onItemAdded(label, minutes, seconds);
+    setLabel('');
+    setMinutes('');
+    setSeconds('');
+  };
 
-  render() {
-    const { label, minutes, seconds } = this.state;
-    return (
-      <header className="header">
-        <h1>Todo List</h1>
-        <form onSubmit={this.onSubmit} className="new-todo-form">
-          <input className="new-todo" placeholder="Task" type="text" value={label} onChange={this.onLabelChange} />
-          <input
-            className="new-todo-form__timer"
-            placeholder="Min"
-            type="number"
-            value={minutes}
-            onChange={this.onMinChange}
-            min="0"
-            max="99"
-          />
-          <input
-            className="new-todo-form__timer"
-            placeholder="Sec"
-            type="number"
-            value={seconds}
-            onChange={this.onSecChange}
-            min="0"
-            max="59"
-          />
-          <button type="submit"></button>
-        </form>
-      </header>
-    );
-  }
-}
+  return (
+    <header className="header">
+      <h1>Todo List</h1>
+      <form onSubmit={onSubmit} className="new-todo-form">
+        <input className="new-todo" placeholder="Task" type="text" value={label} onChange={onLabelChange} />
+        <input
+          className="new-todo-form__timer"
+          placeholder="Min"
+          type="number"
+          value={minutes}
+          onChange={onMinChange}
+          min="0"
+          max="59"
+        />
+        <input
+          className="new-todo-form__timer"
+          placeholder="Sec"
+          type="number"
+          value={seconds}
+          onChange={onSecChange}
+          min="0"
+          max="59"
+        />
+        <button type="submit"></button>
+      </form>
+    </header>
+  );
+};
+
+export default NewTaskForm;
