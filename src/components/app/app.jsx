@@ -7,7 +7,7 @@ import Footer from '../footer/footer';
 import './app.css';
 
 let maxId = 10;
-let date = new Date();
+const date = new Date();
 
 const App = () => {
   const [todoData, setTodoData] = useState([
@@ -70,79 +70,49 @@ const App = () => {
 
   const addItem = (text, min, sec) => {
     const newItem = createTodoItem(text, min, sec);
-    setTodoData((prevTodoData) => [newItem, ...prevTodoData]);
+    setTodoData([newItem, ...todoData]);
   };
 
   const deleteItem = (id) => {
-    setTodoData((prevTodoData) => {
-      const idx = prevTodoData.findIndex((el) => el.id === id);
-      const newArr = [...prevTodoData];
-      newArr.splice(idx, 1);
-      clearInterval(prevTodoData[idx].timerId);
-      return newArr;
-    });
-  };
-
-  const toggleProperty = (arr, id, propName) => {
-    const idx = arr.findIndex((el) => el.id === id);
-    const oldItem = arr[idx];
-    const newItem = { ...oldItem, [propName]: !oldItem[propName] };
-    return [...arr.slice(0, idx), newItem, ...arr.slice(idx + 1)];
+    setTodoData(todoData.filter((item) => item.id !== id));
   };
 
   const onToggleDone = (id) => {
-    setTodoData((prevTodoData) => {
-      const idx = prevTodoData.findIndex((el) => el.id === id);
-      clearInterval(prevTodoData[idx].timerId);
-      return toggleProperty(prevTodoData, id, 'done');
-    });
+    setTodoData(todoData.map((item) => (item.id === id ? { ...item, done: !item.done } : item)));
   };
 
   const clearCompleted = () => {
-    setTodoData((prevTodoData) => {
-      const newArr = prevTodoData.filter((item) => !item.done);
-      return newArr;
-    });
+    setTodoData(todoData.filter((item) => !item.done));
   };
 
   const startTimer = (id) => {
-    setTodoData((prevTodoData) => {
-      const taskIndex = prevTodoData.findIndex((item) => item.id === id);
-      const task = prevTodoData[taskIndex];
+    setTodoData((todoData) => {
+      const taskIndex = todoData.findIndex((item) => item.id === id);
+      const task = todoData[taskIndex];
 
       if (task.timerId === null && !task.done) {
-        const newArr = [...prevTodoData];
+        const newArr = [...todoData];
         newArr[taskIndex].timerId = createTimerInterval(id);
 
         return newArr;
       }
-      return prevTodoData;
+      return todoData;
     });
   };
 
   const stopTimer = (id) => {
-    setTodoData((prevTodoData) => {
-      const newArr = prevTodoData.map((item) =>
-        item.id === id ? { ...item, timerId: clearTimerInterval(item.timerId) } : item
-      );
-      return newArr;
-    });
+    setTodoData(todoData.map((item) => (item.id === id ? { ...item, timerId: clearInterval(item.timerId) } : item)));
   };
 
   const createTimerInterval = (id) => {
     return setInterval(() => {
-      setTodoData((prevTodoData) => {
-        const newArr = prevTodoData.map((item) =>
+      setTodoData((todoData) => {
+        const newArr = todoData.map((item) =>
           item.id === id ? { ...item, timerValue: updateTimerValue(item.timerValue) } : item
         );
         return newArr;
       });
     }, 1000);
-  };
-
-  const clearTimerInterval = (timerId) => {
-    clearInterval(timerId);
-    return null;
   };
 
   const updateTimerValue = (timerValue) => {
