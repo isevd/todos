@@ -101,7 +101,9 @@ const App = () => {
   };
 
   const stopTimer = (id) => {
-    setTodoData(todoData.map((item) => (item.id === id ? { ...item, timerId: clearInterval(item.timerId) } : item)));
+    setTodoData(
+      todoData.map((item) => (item.id === id ? { ...item, timerId: clearTimerInterval(item.timerId) } : item))
+    );
   };
 
   const createTimerInterval = (id) => {
@@ -113,6 +115,11 @@ const App = () => {
         return newArr;
       });
     }, 1000);
+  };
+
+  const clearTimerInterval = (timerId) => {
+    clearInterval(timerId);
+    return null;
   };
 
   const updateTimerValue = (timerValue) => {
