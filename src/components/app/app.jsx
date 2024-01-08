@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import NewTaskForm from '../new-task-form/new-task-form';
 import TaskList from '../task-list/task-list';
@@ -8,35 +8,55 @@ import './app.css';
 
 let maxId = 10;
 const date = new Date();
+const initialState = [
+  {
+    label: 'Drink Coffee',
+    done: false,
+    isActive: false,
+    id: 1,
+    createdDate: date,
+    timerValue: '01:20',
+  },
+  {
+    label: 'Drink Tea',
+    done: false,
+    isActive: false,
+    id: 2,
+    createdDate: date,
+    timerValue: '05:30',
+  },
+  {
+    label: 'Drink Water',
+    done: false,
+    isActive: false,
+    id: 3,
+    createdDate: date,
+    timerValue: '00:40',
+  },
+];
 
 const App = () => {
-  const [todoData, setTodoData] = useState([
-    {
-      label: 'Drink Coffee',
-      done: false,
-      timerId: null,
-      id: 1,
-      createdDate: date,
-      timerValue: '01:20',
-    },
-    {
-      label: 'Drink Tea',
-      done: false,
-      timerId: null,
-      id: 2,
-      createdDate: date,
-      timerValue: '05:30',
-    },
-    {
-      label: 'Drink Water',
-      done: false,
-      timerId: null,
-      id: 3,
-      createdDate: date,
-      timerValue: '00:40',
-    },
-  ]);
+  const [todoData, setTodoData] = useState(initialState);
   const [filter, setFilter] = useState('all');
+
+  useEffect(() => {
+    const intervalIds = todoData
+      .filter((item) => item.isActive)
+      .map((item) => {
+        return setInterval(() => {
+          setTodoData((todoData) => {
+            return todoData.map((todoItem) => {
+              if (todoItem.id === item.id) {
+                return { ...todoItem, timerValue: updateTimerValue(todoItem.timerValue) };
+              }
+              return todoItem;
+            });
+          });
+        }, 1000);
+      });
+
+    return () => intervalIds.forEach(clearInterval);
+  }, [todoData]);
 
   const onChangeFilter = (filter) => {
     setFilter(filter);
@@ -61,7 +81,7 @@ const App = () => {
     return {
       label: label,
       done: false,
-      timerId: null,
+      isActive: false,
       id: maxId++,
       createdDate: date,
       timerValue: setTimer(min, sec),
@@ -86,40 +106,11 @@ const App = () => {
   };
 
   const startTimer = (id) => {
-    setTodoData((todoData) => {
-      const taskIndex = todoData.findIndex((item) => item.id === id);
-      const task = todoData[taskIndex];
-
-      if (task.timerId === null && !task.done) {
-        const newArr = [...todoData];
-        newArr[taskIndex].timerId = createTimerInterval(id);
-
-        return newArr;
-      }
-      return todoData;
-    });
+    setTodoData(todoData.map((item) => (item.id === id ? { ...item, isActive: true } : item)));
   };
 
   const stopTimer = (id) => {
-    setTodoData(
-      todoData.map((item) => (item.id === id ? { ...item, timerId: clearTimerInterval(item.timerId) } : item))
-    );
-  };
-
-  const createTimerInterval = (id) => {
-    return setInterval(() => {
-      setTodoData((todoData) => {
-        const newArr = todoData.map((item) =>
-          item.id === id ? { ...item, timerValue: updateTimerValue(item.timerValue) } : item
-        );
-        return newArr;
-      });
-    }, 1000);
-  };
-
-  const clearTimerInterval = (timerId) => {
-    clearInterval(timerId);
-    return null;
+    setTodoData(todoData.map((item) => (item.id === id ? { ...item, isActive: false } : item)));
   };
 
   const updateTimerValue = (timerValue) => {
