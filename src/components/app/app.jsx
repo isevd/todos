@@ -90,27 +90,27 @@ const App = () => {
 
   const addItem = (text, min, sec) => {
     const newItem = createTodoItem(text, min, sec);
-    setTodoData([newItem, ...todoData]);
+    setTodoData((prevTodoData) => [newItem, ...prevTodoData]);
   };
 
   const deleteItem = (id) => {
-    setTodoData(todoData.filter((item) => item.id !== id));
+    setTodoData((prevTodoData) => prevTodoData.filter((item) => item.id !== id));
   };
 
   const onToggleDone = (id) => {
-    setTodoData(todoData.map((item) => (item.id === id ? { ...item, done: !item.done } : item)));
+    setTodoData((prevTodoData) => prevTodoData.map((item) => (item.id === id ? { ...item, done: !item.done } : item)));
   };
 
   const clearCompleted = () => {
-    setTodoData(todoData.filter((item) => !item.done));
+    setTodoData((prevTodoData) => prevTodoData.filter((item) => !item.done));
   };
 
   const startTimer = (id) => {
-    setTodoData(todoData.map((item) => (item.id === id ? { ...item, isActive: true } : item)));
+    setTodoData((prevTodoData) => prevTodoData.map((item) => (item.id === id ? { ...item, isActive: true } : item)));
   };
 
   const stopTimer = (id) => {
-    setTodoData(todoData.map((item) => (item.id === id ? { ...item, isActive: false } : item)));
+    setTodoData((prevTodoData) => prevTodoData.map((item) => (item.id === id ? { ...item, isActive: false } : item)));
   };
 
   const updateTimerValue = (timerValue) => {
