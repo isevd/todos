@@ -12,6 +12,7 @@ export default class App extends Component {
   state = {
     todoData: [],
     filter: 'all',
+    status: 'pending',
   };
 
   setFilter = (filter) => {
